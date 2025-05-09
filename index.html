@@ -1,0 +1,188 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Digital Archive Trader</title>
+  <style>
+    body {
+      background: url('https://via.placeholder.com/1920x1080?text=Archive+Background') no-repeat center center fixed;
+      background-size: cover;
+      color: #fff;
+      font-family: 'Arial', sans-serif;
+      padding: 40px;
+      margin: 0;
+    }
+    h1 {
+      font-size: 2.5em;
+      margin-bottom: 20px;
+      text-shadow: 2px 2px 5px rgba(0, 0, 0, 0.7);
+    }
+    button {
+      background-color: rgba(0, 0, 0, 0.7);
+      color: white;
+      border: none;
+      padding: 12px 25px;
+      margin: 10px;
+      font-size: 1.1em;
+      cursor: pointer;
+      border-radius: 10px;
+      box-shadow: 0 5px 10px rgba(0, 0, 0, 0.3);
+    }
+    button:hover {
+      background-color: rgba(0, 0, 0, 0.9);
+    }
+    .stats {
+      margin-top: 20px;
+      font-size: 1.3em;
+      background-color: rgba(0, 0, 0, 0.6);
+      padding: 20px;
+      border-radius: 10px;
+    }
+    .lost-message {
+      color: red;
+      font-size: 1.8em;
+      margin-top: 20px;
+    }
+    .hidden { display: none; }
+    #intro {
+      background-color: rgba(0,0,0,0.7);
+      padding: 30px;
+      border-radius: 12px;
+      max-width: 800px;
+      margin: auto;
+      color: white;
+    }
+    #game-container {
+      display: flex;
+      justify-content: space-between;
+      align-items: flex-start;
+      gap: 40px;
+      flex-wrap: wrap;
+    }
+    #game-content {
+      max-width: 600px;
+    }
+    .manuscript-img {
+      max-width: 300px;
+      border-radius: 10px;
+      box-shadow: 0 0 10px black;
+    }
+  </style>
+</head>
+<body>
+
+  <!-- INTRO SCREEN -->
+  <div id="intro">
+    <h1>Welcome to Digital Archive Trader</h1>
+    <p><strong>Story:</strong> In a time of digital decay, the world's historic knowledge is vanishing. You are a lone digital archivist, responsible for rescuing lost text fragments, enriching them with metadata, and sustaining your mission through preservation funds.</p>
+    <p><strong>Your Mission:</strong> Keep the digital archive alive. If preservation funds run out, the archive collapses and knowledge is lost forever.</p>
+    <p><strong>How to Play:</strong></p>
+    <ul>
+      <li>💰 Start with <b>10 funds</b>.</li>
+      <li>📜 <b>Collect Text Fragment</b>: costs 1 fund, gives 1 text</li>
+      <li>📝 <b>Improve Metadata</b>: costs 5 texts, increases metadata level</li>
+      <li>💰 <b>Sell Text Fragment</b>: gain 2 funds</li>
+      <li>❌ <b>Lose when funds reach 0</b></li>
+    </ul>
+    <button onclick="startGame()">Start Game</button>
+  </div>
+
+  <!-- GAME SCREEN -->
+  <div id="game" class="hidden">
+    <div id="game-container">
+      <!-- Game Text & Buttons -->
+      <div id="game-content">
+        <h1>Digital Archive Trader</h1>
+
+        <button onclick="collectText()">📜 Collect Text Fragment</button>
+        <button onclick="improveMetadata()">📝 Improve Metadata</button>
+        <button onclick="sellText()">💰 Sell Text Fragment</button>
+
+        <div class="stats">
+          <p>💰 Funds: <span id="funds">10</span></p>
+          <p>📚 Texts: <span id="texts">0</span></p>
+          <p>📈 Metadata Level: <span id="metadataLevel">1</span></p>
+        </div>
+
+        <div id="lost" class="lost-message hidden">
+          <p>⚠️ You lost the archive! All preservation funds are gone.</p>
+          <button onclick="restartGame()">🔁 Restart Game</button><br>
+        </div>
+      </div>
+
+      <!-- Right-side image -->
+      <img class="manuscript-img" src="manuscript.jpg" alt="Manuscript Image">
+    </div>
+  </div>
+
+  <!-- AUDIO ELEMENTS -->
+  <audio id="audioCollect" src="collect.mp3"></audio>
+  <audio id="audioMetadata" src="metadata.mp3"></audio>
+  <audio id="audioSell" src="sell.mp3"></audio>
+
+  <script>
+    let funds = 10;
+    let texts = 0;
+    let metadataLevel = 1;
+
+    const fundsDisplay = document.getElementById("funds");
+    const textsDisplay = document.getElementById("texts");
+    const metadataDisplay = document.getElementById("metadataLevel");
+    const lostMessage = document.getElementById("lost");
+
+    function startGame() {
+      document.getElementById("intro").classList.add("hidden");
+      document.getElementById("game").classList.remove("hidden");
+      updateDisplay();
+    }
+
+    function updateDisplay() {
+      fundsDisplay.textContent = funds;
+      textsDisplay.textContent = texts;
+      metadataDisplay.textContent = metadataLevel;
+
+      if (funds <= 0) {
+        lostMessage.classList.remove("hidden");
+      }
+    }
+
+    function collectText() {
+      if (funds >= 1) {
+        document.getElementById("audioCollect").play();
+        funds -= 1;
+        texts += 1;
+        updateDisplay();
+      }
+    }
+
+    function improveMetadata() {
+      if (texts >= 5) {
+        document.getElementById("audioMetadata").play();
+        texts -= 5;
+        metadataLevel += 1;
+        updateDisplay();
+      } else {
+        alert("Not enough text fragments to improve metadata! You need at least 5.");
+      }
+    }
+
+    function sellText() {
+      if (texts >= 1) {
+        document.getElementById("audioSell").play();
+        texts -= 1;
+        funds += 2;
+        updateDisplay();
+      }
+    }
+
+    function restartGame() {
+      funds = 10;
+      texts = 0;
+      metadataLevel = 1;
+      lostMessage.classList.add("hidden");
+      updateDisplay();
+    }
+  </script>
+
+</body>
+</html>
